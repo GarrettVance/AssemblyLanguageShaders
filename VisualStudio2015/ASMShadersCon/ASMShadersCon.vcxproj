@@ -145,9 +145,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShinyOptions.h" />
     <ClInclude Include="stb_image.h" />
