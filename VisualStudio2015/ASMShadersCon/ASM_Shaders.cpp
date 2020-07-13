@@ -18,7 +18,7 @@ void V2Sprite::Compile_ARBVertexProgram_ASM()
     GLuint vertexProgramNum;
     glGenProgramsARB(1, &vertexProgramNum);
     static const char bangbangVertexProgText[] = 
-        "!!ARBvp1.0                                                     \n"			  
+        "!!ARBvp1.0                                                     \n"           
         "ATTRIB inputPosition = vertex.position;                        \n"
         "ATTRIB inputNormal = vertex.normal;                            \n"
         "ATTRIB inputSpriteSize = vertex.attrib[5];                     \n"
@@ -37,9 +37,9 @@ void V2Sprite::Compile_ARBVertexProgram_ASM()
             ", {0.8191, 0.5735, 0.0, 0.0} , {0.9396, 0.3420, 0.0, 0.0} , {1.0000, 0.0000, 0.0, 0.0}  \n"
             ", {1.0000, 0.0000, 0.0, 0.0} , {1.0000, 0.0000, 0.0, 0.0} , {1.0000, 0.0000, 0.0, 0.0}  \n"
             ", {1.0000, 0.0000, 0.0, 0.0} , {0.9848, 0.1736, 0.0, 0.0} , {1.0000, 0.0000, 0.0, 0.0}  \n"
-            ", {1.0000, 0.0000, 0.0, 0.0} };  \n"
+            ", {1.0000, 0.0000, 0.0, 0.0} };                            \n"
         "ADDRESS sinCosAddress;                                         \n"
-        "PARAM shininess = program.local[1];      \n"
+        "PARAM shininess = program.local[1];                            \n"
         "OUTPUT HPosition = result.position;                            \n"
         "OUTPUT Color0 = result.color;                                  \n"
         "OUTPUT TexCoord0 = result.texcoord;                            \n"
@@ -56,10 +56,9 @@ void V2Sprite::Compile_ARBVertexProgram_ASM()
         "DP3 abNormal.z, inputNormal, modelViewIT[2];                   \n"
 
         "TEMP mvNormal;                                                 \n"
-//         "NRM mvNormal, abNormal;                                        \n"
-         "DP3 mvNormal.w, abNormal, abNormal;                            \n"
-         "RSQ mvNormal.w, mvNormal.w;                                    \n"
-         "MUL mvNormal.xyz, mvNormal.w, abNormal;                        \n"  // or abNormal.xyz;
+        "DP3 mvNormal.w, abNormal, abNormal;                            \n"
+        "RSQ mvNormal.w, mvNormal.w;                                    \n"
+        "MUL mvNormal.xyz, mvNormal.w, abNormal;                        \n"  // or abNormal.xyz;
 
         "TEMP eyeDir;                                                   \n"
         "DP3 eyeDir.w, viewSpacePos, viewSpacePos;                      \n"
@@ -73,11 +72,11 @@ void V2Sprite::Compile_ARBVertexProgram_ASM()
         "RSQ lightDir.w, lightDir.w;                                    \n"
         "MUL lightDir.xyz, lightDir.w, diff;                            \n"   // or diff.xyz;
 
-        "TEMP cross;                                                   \n"
+        "TEMP cross;                                                    \n"
         "TEMP mvpos2;                                                   \n"
-        "XPD cross, lightDir, mvNormal;                                \n"
-        "ADD mvpos2, cross, viewSpacePos;                              \n"
-        "MOV mvpos2.w, { 0, 0, 0, 0 };                                 \n"
+        "XPD cross, lightDir, mvNormal;                                 \n"
+        "ADD mvpos2, cross, viewSpacePos;                               \n"
+        "MOV mvpos2.w, { 0, 0, 0, 0 };                                  \n"
 
         "TEMP LPlusE;                                                   \n"  
         "ADD LPlusE, lightDir, eyeDir;                                  \n"
@@ -86,28 +85,27 @@ void V2Sprite::Compile_ARBVertexProgram_ASM()
         "RSQ HalfV.w, HalfV.w;                                          \n"
         "MUL HalfV.xyz, HalfV.w, LPlusE;                                \n" 
 
-        "TEMP NLCosSin;                                   \n"  
-        "TEMP csIndex;                                    \n"  
-        "DP3 NLCosSin.x, mvNormal, HalfV;                       \n"
-        "MUL NLCosSin.z, NLCosSin.x, NLCosSin.x;                \n"  // Using z and w just for scratch calculations.
-        "SUB NLCosSin.w, { 1, 1, 1, 1 }, NLCosSin.z;                     \n"
-        "RSQ NLCosSin.w, NLCosSin.w;                            \n"
-        "RCP NLCosSin.y, NLCosSin.w;                            \n"
-        "MOV NLCosSin.zw, { 0, 0, 0, 0 };                                \n"  // Keep only the x and y components; 
-        "MUL csIndex, NLCosSin.x, { 30.0, 30.0, 30.0, 30.0 };                     \n"   // Slices = 30; 
-        "MAX csIndex, csIndex, { 4.0, 4.0, 4.0, 4.0 };                         \n"  
-        "ARL sinCosAddress.x, csIndex.x;                        \n"
-        "MUL NLCosSin, NLCosSin, sinCosVal[sinCosAddress.x + 0];    \n"  
-        "TEMP NDotH;                                            \n"  
-        "ADD NDotH, NLCosSin.x, NLCosSin.y;                     \n"  
+        "TEMP NLCosSin;                                                 \n"  
+        "TEMP csIndex;                                                  \n"  
+        "DP3 NLCosSin.x, mvNormal, HalfV;                               \n"
+        "MUL NLCosSin.z, NLCosSin.x, NLCosSin.x;                        \n"  // Using z and w for scratch.
+        "SUB NLCosSin.w, { 1, 1, 1, 1 }, NLCosSin.z;                    \n"
+        "RSQ NLCosSin.w, NLCosSin.w;                                    \n"
+        "RCP NLCosSin.y, NLCosSin.w;                                    \n"
+        "MOV NLCosSin.zw, { 0, 0, 0, 0 };                               \n"  // Keep only the x and y components; 
+        "MUL csIndex, NLCosSin.x, { 30.0, 30.0, 30.0, 30.0 };           \n"   // Slices = 30; 
+        "MAX csIndex, csIndex, { 4.0, 4.0, 4.0, 4.0 };                  \n"  
+        "ARL sinCosAddress.x, csIndex.x;                                \n"
+        "MUL NLCosSin, NLCosSin, sinCosVal[sinCosAddress.x + 0];        \n"  
+        "TEMP NDotH;                                                    \n"  
+        "ADD NDotH, NLCosSin.x, NLCosSin.y;                             \n"  
 
-
-        "TEMP preLit;                                       \n"  
-        "MOV preLit.x, { 1, 1, 1, 1 };                               \n"  
-        "MOV preLit.y, NDotH;                               \n"  
-        "MOV preLit.w, shininess.w;                           \n"  
-        "TEMP litCoefficients;                              \n"  
-        "LIT litCoefficients, preLit;                       \n"  
+        "TEMP preLit;                                                   \n"  
+        "MOV preLit.x, { 1, 1, 1, 1 };                                  \n"  
+        "MOV preLit.y, NDotH;                                           \n"  
+        "MOV preLit.w, shininess.w;                                     \n"  
+        "TEMP litCoefficients;                                          \n"  
+        "LIT litCoefficients, preLit;                                   \n"  
 
         // projPos1 and projPos2:
         "TEMP projPos1;                                                 \n"
@@ -115,39 +113,40 @@ void V2Sprite::Compile_ARBVertexProgram_ASM()
         "DP4 projPos1.y, projectionMatrix[1], viewSpacePos;             \n"
         "DP4 projPos1.z, projectionMatrix[2], viewSpacePos;             \n"
         "DP4 projPos1.w, projectionMatrix[3], viewSpacePos;             \n"
-        "TEMP projPos2;                                             \n"
-        "DP4 projPos2.x, projectionMatrix[0], mvpos2;               \n"
-        "DP4 projPos2.y, projectionMatrix[1], mvpos2;               \n"
-        "DP4 projPos2.z, projectionMatrix[2], mvpos2;               \n"
-        "DP4 projPos2.w, projectionMatrix[3], mvpos2;               \n"
-        "TEMP denom;                                          \n"
-        "TEMP pos2d1;                                         \n"
-        "RCP denom, projPos1.w;                               \n"
-        "MUL pos2d1, projPos1, denom;                         \n"
-        "TEMP pos2d2;                                         \n"
-        "RCP denom, projPos2.w;                               \n"
-        "MUL pos2d2, projPos2, denom;                         \n"
+
+        "TEMP projPos2;                                                 \n"
+        "DP4 projPos2.x, projectionMatrix[0], mvpos2;                   \n"
+        "DP4 projPos2.y, projectionMatrix[1], mvpos2;                   \n"
+        "DP4 projPos2.z, projectionMatrix[2], mvpos2;                   \n"
+        "DP4 projPos2.w, projectionMatrix[3], mvpos2;                   \n"
+        "TEMP denom;                                                    \n"
+        "TEMP pos2d1;                                                   \n"
+        "RCP denom, projPos1.w;                                         \n"
+        "MUL pos2d1, projPos1, denom;                                   \n"
+        "TEMP pos2d2;                                                   \n"
+        "RCP denom, projPos2.w;                                         \n"
+        "MUL pos2d2, projPos2, denom;                                   \n"
         "TEMP diffPos2;                                                 \n"
         "SUB diffPos2, pos2d2, pos2d1;                                  \n"
-        "MOV diffPos2.zw, { 0, 0, 0, 0 };                                        \n"
+        "MOV diffPos2.zw, { 0, 0, 0, 0 };                               \n"
         "TEMP dir2d;                                                    \n"
         "DP3 dir2d.w, diffPos2, diffPos2;                               \n"
         "RSQ dir2d.w, dir2d.w;                                          \n"
         "MUL dir2d.xyz, dir2d.w, diffPos2;                              \n"  // or diffPos2.xyz;
 
-        "TEMP sVal;                                           \n"
-        "MAD sVal, litCoefficients.zzzz, inputSpriteSize.zzzz, inputSpriteSize.xxxx;   \n"
-        "MAD projPos1.xy, dir2d, sVal, projPos1;   \n"
-        "MAD sVal, litCoefficients.zzzz, inputSpriteSize.wwww, inputSpriteSize.yyyy;   \n"
-        "MAD projPos1.x, dir2d.y, sVal, projPos1.x;   \n"
-        "MAD projPos1.y, -dir2d.x, sVal, projPos1.y;   \n"
+        "TEMP sVal;                                                                     \n"
+        "MAD sVal, litCoefficients.zzzz, inputSpriteSize.zzzz, inputSpriteSize.xxxx;    \n"
+        "MAD projPos1.xy, dir2d, sVal, projPos1;                                        \n"
+        "MAD sVal, litCoefficients.zzzz, inputSpriteSize.wwww, inputSpriteSize.yyyy;    \n"
+        "MAD projPos1.x, dir2d.y, sVal, projPos1.x;                                     \n"
+        "MAD projPos1.y, -dir2d.x, sVal, projPos1.y;                                    \n"
 
-        "MOV HPosition, projPos1;                                       \n"
-        "MOV Color0, {1, 1, 1, 1};                                      \n"
-        "MOV TexCoord0, inputTexCoord;                                  \n"
-        "MOV TexCoord1.w, { 0, 0, 0, 1 };                                        \n"
-        "MAD TexCoord1.xy, pos2d1, { 0.5, 0.5, 0.5, 0.5 }, { 0.5, 0.5, 0.5, 0.5 };  \n"
-        "MOV TexCoord1.w, { 1, 1, 1, 1 };                                        \n"
+        "MOV HPosition, projPos1;                                                       \n"
+        "MOV Color0, {1, 1, 1, 1};                                                      \n"
+        "MOV TexCoord0, inputTexCoord;                                                  \n"
+        "MOV TexCoord1.w, { 0, 0, 0, 1 };                                               \n"
+        "MAD TexCoord1.xy, pos2d1, { 0.5, 0.5, 0.5, 0.5 }, { 0.5, 0.5, 0.5, 0.5 };      \n"
+        "MOV TexCoord1.w, { 1, 1, 1, 1 };                                               \n"
         "END";
     glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vertexProgramNum);
 
@@ -252,7 +251,7 @@ void V2Sprite::Compile_RegisterCombiners_Dual_Texture_Combiner()
     GLuint fragprognum;
     glGenProgramsARB(1, &fragprognum);
     static const char bangbangFragmentProgText[] = 
-        "!!ARBfp1.0                             \n"			  
+        "!!ARBfp1.0                             \n"           
         "TEMP temp0;                            \n"
         "ATTRIB tex0 = fragment.texcoord;       \n"
         "TEX temp0, tex0, texture[0], 2D;       \n"
@@ -302,7 +301,7 @@ void V2Sprite::Compile_RegisterCombiners_Without_Textures()
     GLuint fragprognum;
     glGenProgramsARB(1, &fragprognum);
     static const char bangbangFragmentProgText[] = 
-        "!!ARBfp1.0                             \n"			  
+        "!!ARBfp1.0                             \n"           
         "MOV result.color, fragment.color;      \n"
         "END";
     glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, fragprognum);
