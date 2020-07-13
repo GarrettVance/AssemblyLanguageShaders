@@ -1,0 +1,7 @@
+27.06.04 Beta2
++ Corrections to documentation
++ Added support of DP2ADD instruction to PS.2.0->ARB translator
++ Bug with texreg2* is fixed in 1.2->NSC translator
+
+16.10.03 Beta1
++ Initial

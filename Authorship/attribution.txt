@@ -1,0 +1,19 @@
+This repository derives from the NVIDIA cg_ShinySprites demo for OpenGL. 
+
+The specific source code distribution I used as my starting point was distributed by NVIDIA in the year 2007.
+
+I cannot name all those who contributed to the NVIDIA code, but some of the 
+names which appeared many times in my research are
+
+Kurt Akeley,
+Mark Kilgard,
+Brian Paul,
+Cass Everitt,
+Tristan Lorach,
+Chris Wynn,
+Mark Harris.
+
+<to be continued...>
+
+
+
